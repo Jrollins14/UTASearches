@@ -1,7 +1,9 @@
 package com.example.alphapod.homework2;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -28,6 +30,7 @@ public class MyActivity extends Activity {
     ArrayAdapter<String> adapter;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    final Context context = this;
 
 
     @Override
@@ -48,6 +51,70 @@ public class MyActivity extends Activity {
             public void onItemClick(AdapterView<?> a, View v, int position, long id)
             {
                 loadPreferences(tags.get(position));
+            }
+        });
+
+        listView.setOnItemLongClickListener (new AdapterView.OnItemLongClickListener()
+        {
+            public boolean onItemLongClick(AdapterView<?> a, View v, int position, long id)
+            {
+                //do your stuff here
+                final CharSequence[] items = {"Share", "Edit", "Delete"};
+                final String tag = (tags.get(position));
+                String msg = String.format("Share, Edit or Delete the search tagged as \"%s\"", tag);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+
+                // set title
+                alertDialogBuilder.setTitle(msg);
+
+                alertDialogBuilder
+
+                        .setCancelable(false)
+                        .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener()
+                        {
+                                @Override
+                                public void onClick(DialogInterface arg0, int arg1)
+                                {
+                                    // TODO Auto-generated method stub
+                                    String selected = items[arg1].toString();
+
+                                    if(selected.equals("Share"))
+                                    {
+
+                                    }
+                                    else if(selected.equals("Edit"))
+                                    {
+
+                                    }
+                                    else if(selected.equals("Delete"))
+                                    {
+                                        tags.remove(tag.toString());
+                                        adapter.notifyDataSetChanged();
+
+
+                                    }
+
+                                }
+
+                        })
+                        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+
+
+                 
+
+
+                // create alert dialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                // show it
+                alertDialog.show();
+
+
+                return true;
             }
         });
     }
@@ -110,5 +177,7 @@ public class MyActivity extends Activity {
 
         startActivity(i);
     }
+
+
 
 }
