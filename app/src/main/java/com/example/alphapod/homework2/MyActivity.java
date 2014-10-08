@@ -26,11 +26,13 @@ public class MyActivity extends Activity {
 
 
 
-    ArrayList<String> tags = new ArrayList<String>();
+    ArrayList<String> tags;
     ArrayAdapter<String> adapter;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     final Context context = this;
+    EditText searchBox;
+    EditText tagBox;
 
 
     @Override
@@ -38,13 +40,21 @@ public class MyActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
 
+        searchBox = (EditText) findViewById(R.id.searchBox);
+        tagBox = (EditText) findViewById(R.id.tagBox);
+
+        sharedPreferences = getPreferences(MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        tags = new ArrayList<String>(sharedPreferences.getAll().keySet());
+
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, tags);
 
         final ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(adapter);
 
-        sharedPreferences = getPreferences(MODE_PRIVATE);
-        editor = sharedPreferences.edit();
+
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
@@ -71,40 +81,56 @@ public class MyActivity extends Activity {
                 alertDialogBuilder
 
                         .setCancelable(false)
-                        .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener()
-                        {
-                                @Override
-                                public void onClick(DialogInterface arg0, int arg1)
+                        .setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                // TODO Auto-generated method stub
+                                String selected = items[arg1].toString();
+
+                                if (selected.equals("Share"))
                                 {
-                                    // TODO Auto-generated method stub
-                                    String selected = items[arg1].toString();
+                                    Intent shareIntent = new Intent();
+                                    shareIntent.setAction(Intent.ACTION_SEND);
+                                    shareIntent.setType("text/plain");
+                                    startActivity(Intent.createChooser(shareIntent, "Share"));
 
-                                    if(selected.equals("Share"))
-                                    {
-
-                                    }
-                                    else if(selected.equals("Edit"))
-                                    {
-
-                                    }
-                                    else if(selected.equals("Delete"))
-                                    {
-                                        tags.remove(tag.toString());
-                                        adapter.notifyDataSetChanged();
+                                }
+                                else if (selected.equals("Edit"))
+                                {
+                                    searchBox.setText(sharedPreferences.getString(tag, ""));
+                                    tagBox.setText(tag);
+                                    //tags.remove(tag);
+                                    //adapter.notifyDataSetChanged();
+                                    //editor.remove(tag);
+                                    //editor.apply();
 
 
-                                    }
+                                }
+                                else if (selected.equals("Delete"))
+                                {
+                                    tags.remove(tag);
+                                    adapter.notifyDataSetChanged();
+                                    editor.remove(tag);
+                                    editor.apply();
+
 
                                 }
 
+                            }
+
                         })
+                        /*.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            }
+                        })*/
                         .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                             }
                         });
 
 
-                 
+
 
 
                 // create alert dialog
@@ -112,6 +138,7 @@ public class MyActivity extends Activity {
 
                 // show it
                 alertDialog.show();
+
 
 
                 return true;
@@ -144,19 +171,32 @@ public class MyActivity extends Activity {
         String tag;
         String query;
 
-        EditText searchBox = (EditText) findViewById(R.id.searchBox);
-        EditText tagBox = (EditText) findViewById(R.id.tagBox);
+
 
         tag = tagBox.getText().toString();
         query = searchBox.getText().toString();
 
-        tags.add(tagBox.getText().toString());
         editor.putString(tag, query);
         editor.commit();
-        searchBox.setText("");
-        tagBox.setText("");
 
-        adapter.notifyDataSetChanged();
+        if(!tags.contains(tag))
+        {
+            tags.add(tagBox.getText().toString());
+
+            searchBox.setText("");
+            tagBox.setText("");
+
+            adapter.notifyDataSetChanged();
+        }
+        else
+        {
+            searchBox.setText("");
+            tagBox.setText("");
+            searchBox.requestFocus();
+        }
+
+
+
 
         //hide keyboard
         ((InputMethodManager) getSystemService (
