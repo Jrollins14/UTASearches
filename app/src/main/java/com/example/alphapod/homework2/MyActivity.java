@@ -108,11 +108,33 @@ public class MyActivity extends Activity {
                                 }
                                 else if (selected.equals("Delete"))
                                 {
-                                    tags.remove(tag);
-                                    adapter.notifyDataSetChanged();
-                                    editor.remove(tag);
-                                    editor.apply();
+                                    String msg2 = String.format("Are you sure you want to delete \"%s\"", tag);
+                                    AlertDialog.Builder deleteBuilder = new AlertDialog.Builder(context);
 
+                                    // set title
+                                    deleteBuilder.setTitle("Delete Confirmation");
+
+                                    deleteBuilder.setMessage(msg2);
+                                    deleteBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+
+                                                    tags.remove(tag);
+                                                    adapter.notifyDataSetChanged();
+                                                    editor.remove(tag);
+                                                    editor.apply();
+
+                                                }
+                                            });
+                                    deleteBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+
+                                                    }
+                                            });
+
+
+
+                                    AlertDialog alertDialog = deleteBuilder.create();
+                                    alertDialog.show();
 
                                 }
 
