@@ -99,12 +99,7 @@ public class MyActivity extends Activity {
                                 {
                                     searchBox.setText(sharedPreferences.getString(tag, ""));
                                     tagBox.setText(tag);
-                                    //tags.remove(tag);
-                                    //adapter.notifyDataSetChanged();
-                                    //editor.remove(tag);
-                                    //editor.apply();
-
-
+                                    searchBox.requestFocus();
                                 }
                                 else if (selected.equals("Delete"))
                                 {
@@ -141,11 +136,6 @@ public class MyActivity extends Activity {
                             }
 
                         })
-                        /*.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                            }
-                        })*/
                         .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                             }
